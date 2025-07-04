@@ -1,0 +1,12 @@
+[project]
+name = "emby-mcp"
+version = "0.3.0"
+description = "Model Context Protocol (MCP) server that connects an Emby media server to an AI client such as Claude Desktop."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "embyclient>=4.9.0.33",
+    "mcp[cli]>=1.9.4",
+    "unidecode>=1.4.0",
+]
