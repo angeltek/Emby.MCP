@@ -50,7 +50,8 @@ uv sync --link-mode=copy
 ```
 
 ### Install Hotfix Patches
-At every Python virtual environment sync or build (such as the step above) you will need to patch the Emby client SDK until such a time as these fix are incorporated into Emby's official release.
+At every Python virtual environment sync (like the step above) you will need to patch the Emby client SDK until [these fix on github](https://github.com/angeltek/Emby.SDK/tree/4.9.0.33-Beta-A01) have been incorporated into Emby's official release.
+
 * From a Powershell terminal, run:
 ```
 cd \path\to\Emby.MCP
