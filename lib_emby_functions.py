@@ -463,11 +463,11 @@ def get_items(e_api_client: object, user_id: str, library_id: str = "", **kwargs
                     item['run_time'] = f"{str(tthours).zfill(2)}:{str(ttmins).zfill(2)}:{str(ttsecs).zfill(2)}"
                 item.pop('run_time_ticks', None)
   
-            # Perform lyric searching by matching against the lyric field of each item returned by Emby, after convertion to lower case ASCII
+            # Perform lyric searching by matching against the lyric or overview fields of each item returned by Emby, after convertion to lower case ASCII
             if lyrics_search != "":
                 filtered_items = [
                     item for item in filtered_items
-                    if item['lyrics'] is not None and unidecode(lyrics_search.casefold()) in unidecode(item['lyrics'].casefold())
+                    if (item['lyrics'] is not None and unidecode(lyrics_search.casefold()) in unidecode(item['lyrics'].casefold())) or (item['overview'] is not None and unidecode(lyrics_search.casefold()) in unidecode(item['overview'].casefold()))
                 ]
 
         else:
