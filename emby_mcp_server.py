@@ -52,7 +52,7 @@ if MY_DEBUG:
 
 # Some statements about the script
 MY_NAME = "Emby.MCP"
-MY_VERSION = "1.0.0"
+MY_VERSION = "1.0.1"
 MY_PURPOSE = """These MCP tools allow you to control an Emby media server. Using them you can retrieve
 a list of libraries, genres, playlists, audio & video items, and player sessions. 
 You can add items to playlists and play, pause and stop itens on a player session."""
