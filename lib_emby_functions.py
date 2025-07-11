@@ -404,15 +404,14 @@ def get_items(e_api_client: object, user_id: str, library_id: str = "", **kwargs
     # Run query and process results
     api_instance = emby_client.ItemsServiceApi(e_api_client)
     extrafields='Genres,MediaSources,DateCreated,Overview,ProductionYear,PremiereDate'
-    media_types='Audio,video'
+    media_types = 'Audio,Video' # Only return these media types
 
     try:
-        api_response = api_instance.get_users_by_userid_items(user_id, parent_id=library_id, recursive=True, include_item_types=media_types, fields=extrafields, **kwcooked)
-
+        api_response = api_instance.get_users_by_userid_items(user_id, parent_id=library_id, media_types=media_types, recursive=True, fields=extrafields, **kwcooked)
         total_count = api_response.total_record_count
         if total_count > 0:
             items_list = api_response.items
-            # Filter out non-audio and non-video items, and return only a subset of fields
+            # Return only a subset of fields
             filtered_items = [
                 {
                     'title': item.name if item.name else "",
@@ -446,7 +445,6 @@ def get_items(e_api_client: object, user_id: str, library_id: str = "", **kwargs
                     'item_id': item.id if item.id else ""
                 }
                 for item in items_list
-                if item.media_type.lower() == 'audio' or item.media_type.lower() == 'video'
             ]
             
             # Extract the lyrics string from the 'media sources' object, if available
