@@ -189,7 +189,7 @@ welcome to redistribute it under certain conditions; see LICENSE.txt for details
                                 if user_input_genre != '':
                                     kwargs['genre'] = user_input_genre
                                 if user_input_lyrics != '':
-                                    kwargs['genre'] = user_input_lyrics
+                                    kwargs['lyrics'] = user_input_lyrics
                                 if user_input_years != '':
                                     kwargs['years'] = user_input_years
 
