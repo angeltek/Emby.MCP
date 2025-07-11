@@ -32,6 +32,8 @@ A minimum viable project that allows an LLM to do the following via MCP tools:
 ## Installation
 The following instructions are for a clean installation on Windows 11 Pro - adjust for your own platform and needs.
 
+[Install Python](#install-python) | [Install Emby.MCP](#install-emby.mcp) | [Install Patches](#install-hotfix-patches) | [Login Config](#login-configuration) | [Basic Checks](#basic-checks) | [Configure LLM](#configure-your-llm-mcp-client)
+
 ### Install Python
 * Install [latest Python](https://www.python.org/). Customise the install: Optional Features = select all | Advanced Options = install for all, associate files, create shortcuts, add to environment, precompile.
 * From a Powershell terminal, run:
@@ -116,16 +118,18 @@ Running Emby.MCP in standalone mode, press CTRL-C to exit.
 ```
 * If this is successful, press Control-C or close the Powershell terminal to exit the script.
 
-### Configure Claude Desktop
-If you use a different MCP LLM client you will need to adapt these instructions yourself. 
-* Install the [latest Claude Desktop app](https://claude.ai/download) on the same machine that you installed Python.
-* You will need to have at least a [Pro subscription](https://claude.ai/login#pricing) - the free plan does not support MCP, unfortunately :-| 
-* Add the Emby.MCP integration to the desktop app by running the following from a Powershell terminal:
+### Configure Your LLM MCP Client
+* Add the Emby.MCP integration to the MCP SDK by running the following from a Powershell terminal:
 ```
 cd \path\to\Emby.MCP
 uv run mcp install --name "Emby" --with "embyclient" emby_mcp_server.py
 ```
-* And then edit file ```%USERPROFILE%\AppData\Roaming\Claude\claude_desktop_config.json``` (Clicking through ```Claude Desktop > File menu > Settings > Developer > Edit Config``` will open File Explorer on this file - edit it in Notepad or whatever). Modify so that it looks something like this, noting that on Windows path separators **must** be escaped as ```\\``` :
+* Use the instructions below for your choice of client, If you use a client that is not listed here, then you will need to adapt these instructions yourself.
+#### Claude Desktop
+Claude is a good choice as a general-purpose LLM chatbot that works well with Emby.MCP, but requires payment. 
+* Install the [latest Claude Desktop app](https://claude.ai/download) on the same machine that you installed Python.
+* You will need to have at least a [Pro subscription](https://claude.ai/login#pricing) - the free plan does not support MCP, unfortunately :-| 
+* Edit file ```%USERPROFILE%\AppData\Roaming\Claude\claude_desktop_config.json``` (Clicking through ```Claude Desktop > File menu > Settings > Developer > Edit Config``` will open File Explorer on this file - edit it in Notepad or whatever). Modify so that it looks something like this, noting that on Windows path separators **must** be escaped as ```\\``` :
 ```
 {
   "mcpServers": {
@@ -151,12 +155,40 @@ uv run mcp install --name "Emby" --with "embyclient" emby_mcp_server.py
 * Note: if you start Claude Desktop at any time when your Emby server is unavailable then you will get an error message. This is especially the case if Claude is set to "Run on Startup" and your Emby server is installed on the same computer (Claude may start before Emby). Claude will continue to function correctly without Emby.MCP - just restart Claude when the Emby server becomes available.
 * If you get an error message on first-time start up for any other reason, double-check the path in ```claude_desktop_config.json``` above, especially that it uses ```\\``` not single ```\``` in the directory path.
 * Emby.MCP sends messages about serious errors to the standard error output which Claude writes to its log files, so read through ```%USERPROFILE%\AppData\Roaming\Claude\logs\mcp-server-Emby.log``` and ```%USERPROFILE%\AppData\Roaming\Claude\logs\mcp.log``` looking for clues. This can be frustrating!
+#### Microsoft Visual Studio Code
+Visual Studio Code is a good choice for developers - it integrates with MS Copilot and works reasonably well with Emby.MCP
+* Install the [latest VS Code app](https://code.visualstudio.com/Download) on the same machine that you installed Python. You need at least v1.102 for full MCP support.
+* You will need to have a [Copilot](https://github.com/copilot) enabled [github account](https://github.com/signup), along with the relevant VS Code extentions installed & working. You do **not** need a pay-for Copilot Pro subscription - the free plan supports MCP, however you may run into monthly usage limits.
+* Use the official documentation to [Add an MCP Server](https://code.visualstudio.com/docs/copilot/chat/mcp-servers#_add-an-mcp-server), perhaps via [your user configuration](https://code.visualstudio.com/docs/copilot/chat/mcp-servers#_add-an-mcp-server-to-your-user-configuration)
+* Modify the ```mcp.json``` file so that it looks something like this, noting that on Windows path separators **must** be escaped as ```\\``` :
+```
+{
+	"servers": {
+		"Emby": {
+			"command": "uv.exe",
+			"args": [
+				"run",
+				"--directory",
+				"C:\\path\\to\\Emby.MCP",
+				"--with",
+				"embyclient",
+				"--with",
+				"mcp[cli]",
+				"mcp",
+				"run",
+				"emby_mcp_server.py"
+			]
+		}
+	}
+}
+```
+* Start and use the Emby.MCP server per the [offcial VS Code documentation](https://code.visualstudio.com/docs/copilot/chat/mcp-servers#_use-mcp-tools-in-agent-mode).
 
 ## Usage
-### Allow Claude Integration
-The first time Claude Desktop tries to use a new MCP tool, a pop-up will appear asking for permission to use it. Press ```Allow always```.
-### Starting a Conversation with Claude:
-It's a good idea to select an Emby library at the start of a conversation in order to narrow search results and reduce the amount of return data that the LLM has to deal with (that said, you can search across multiple libraries if you wish). E.g.:
+### Allow The Client to Use Tools 
+The first time an MCP client like Claude Desktop or VS Code tries to use a new MCP tool, a pop-up will appear asking for permission to use it. To avoid being asked each time, press or select ```Allow always```.
+### Starting a Conversation:
+It's a good idea to select an Emby library at the start of a conversation in order to narrow search results and reduce the amount of return data that the LLM has to deal with (that said, you can search across multiple libraries if you wish). E.g., from Claude:
 
 >> **list emby libraries**
 > 
@@ -175,18 +207,18 @@ It's a good idea to select an Emby library at the start of a conversation in ord
 > 
 > You can now search, browse, or explore content within the BBC Sounds library. What would you like to do next?
 
-### Instructing Claude
-On startup, Claude desktop receives the list of tools from Emby.MCP (all functions that have ```@mcp.tool()``` 
+### Instructing Your LLM
+On startup, the MCP client receives the list of tools from Emby.MCP (all functions that have ```@mcp.tool()``` 
 immediately prior to their ```def``` line), along with the parameter names and the content of the docstring.
 
-The docstring is a natural language description of the tool, its parameters and its output. From this, Claude
+The docstring is a natural language description of the tool, its parameters and its output. From this, the LLM
 gains an understanding of the capabilities it has at hand, and is quite good at reasoning which tools are 
 required for the instructions that you give it. But it isn't perfect, so:
 * Be brief and specific to reduce LLM confusion.
 * Start a conversation by mentioning Emby as a hint that Emby.MCP tools should be used.
 * If you want to search for audio or video based on a phrase in the **lyrics** or **description** then be explicit
-about this in your instructions, otherwise Claude may only search on Title or Artist.
-* Claude attempts not to ingest large amounts of data, such as from a vague search of a large library. Emby.MCP 
+about this in your instructions, otherwise the LLM may only search on Title or Artist.
+* LLMs attempt not to ingest large amounts of data, such as from a vague search of a large library. Emby.MCP 
 works around this by returning results in bite-sized chunks. Sometimes even this is insufficient, so your instructions 
 may need get creatively persuasive. 
 
