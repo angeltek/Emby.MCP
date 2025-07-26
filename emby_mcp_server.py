@@ -52,7 +52,7 @@ if MY_DEBUG:
 
 # Some statements about the script
 MY_NAME = "Emby.MCP"
-MY_VERSION = "1.0.1"
+MY_VERSION = "1.0.2"
 MY_PURPOSE = """These MCP tools allow you to control an Emby media server. Using them you can retrieve
 a list of libraries, genres, playlists, audio & video items, and player sessions. 
 You can add items to playlists and play, pause and stop itens on a player session."""
@@ -367,6 +367,7 @@ def search_for_item(title_or_album: Optional[str] = "",
             run_time (str): the run time / play length of the item as hh:mm:ss.
             bitrate (int): the bitrate of the item in bits per second.
             item_id (str): the unique identifier of the item within this Emby server.
+            file_path (str): the file path of the item within the Emby server.
     """
 
     ctx = mcp.get_context()

@@ -357,6 +357,7 @@ def get_items(e_api_client: object, user_id: str, library_id: str = "", **kwargs
             run_time (str): the run time of the item as hh:mm:ss.
             bitrate (int): the bitrate of the item in bits per second.
             item_id (str): the unique identifier of the item within this Emby server.
+            file_path (str): the file path of the item within the Emby server.
         success (bool): True if the request was successful, False otherwise.
         error (str): An error message if the request failed, otherwise None.
     """
@@ -407,7 +408,7 @@ def get_items(e_api_client: object, user_id: str, library_id: str = "", **kwargs
     media_types = 'Audio,Video' # Only return these media types
 
     try:
-        api_response = api_instance.get_users_by_userid_items(user_id, parent_id=library_id, media_types=media_types, recursive=True, fields=extrafields, **kwcooked)
+        api_response = api_instance.get_users_by_userid_items(user_id, parent_id=library_id, media_types=media_types, recursive=True, fields="extrafields,path", **kwcooked)
         total_count = api_response.total_record_count
         if total_count > 0:
             items_list = api_response.items
@@ -442,7 +443,8 @@ def get_items(e_api_client: object, user_id: str, library_id: str = "", **kwargs
                     'bitrate': item.bitrate if item.bitrate else "",
                     'run_time_ticks': item.run_time_ticks if item.run_time_ticks else 0,
                     'run_time': "",  # Placeholder for run time, will be filled later
-                    'item_id': item.id if item.id else ""
+                    'item_id': item.id if item.id else "",
+                    "file_path": item.path if item.path else ""
                 }
                 for item in items_list
             ]
