@@ -404,11 +404,11 @@ def get_items(e_api_client: object, user_id: str, library_id: str = "", **kwargs
     
     # Run query and process results
     api_instance = emby_client.ItemsServiceApi(e_api_client)
-    extrafields='Genres,MediaSources,DateCreated,Overview,ProductionYear,PremiereDate'
+    extrafields='Genres,MediaSources,DateCreated,Overview,ProductionYear,PremiereDate,Path'
     media_types = 'Audio,Video' # Only return these media types
 
     try:
-        api_response = api_instance.get_users_by_userid_items(user_id, parent_id=library_id, media_types=media_types, recursive=True, fields="extrafields,path", **kwcooked)
+        api_response = api_instance.get_users_by_userid_items(user_id, parent_id=library_id, media_types=media_types, recursive=True, fields=extrafields, **kwcooked)
         total_count = api_response.total_record_count
         if total_count > 0:
             items_list = api_response.items
@@ -444,7 +444,7 @@ def get_items(e_api_client: object, user_id: str, library_id: str = "", **kwargs
                     'run_time_ticks': item.run_time_ticks if item.run_time_ticks else 0,
                     'run_time': "",  # Placeholder for run time, will be filled later
                     'item_id': item.id if item.id else "",
-                    "file_path": item.path if item.path else ""
+                    'file_path': item.path if item.path else ""  # File path of the item
                 }
                 for item in items_list
             ]
